@@ -15,7 +15,7 @@ interface Props
 const HomePage: NextPage<Props> = ({ pokemons }) =>
 {
     return (
-        <Layout title='Listado de digimons'>
+        <Layout title='Listado de pokemons'>
 
             <Grid.Container gap={2} justify="flex-start">
                 { pokemons.map(( poke: SmallPokemon ) =>
@@ -35,7 +35,7 @@ export const getStaticProps: GetStaticProps = async ( context ) =>
     const pokemons: SmallPokemon[] = data.results.map( pokemon =>
     {
         const idPokemon = pokemon.url!.split('/')[6]
-        const imgPokemon = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${ idPokemon }.png`
+        const imgPokemon = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${ idPokemon }.svg`
 
         return {
             ...pokemon,
