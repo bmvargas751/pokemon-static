@@ -25,8 +25,8 @@ export const Navbar = () =>
 
             <NextLink href="/" passHref>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Text color="white" h2>D</Text>
-                    <Text color="white" h3>igimon</Text>
+                    <Text color="white" h2>P</Text>
+                    <Text color="white" h3>okemon</Text>
                 </div>
             </NextLink>
             <Spacer css={{ flex: 1 }}/>
