@@ -1,8 +1,13 @@
-import { Button, Card, Container, Grid, Image, Text } from "@nextui-org/react"
+import { useState, useEffect } from 'react';
+
 import { GetStaticPaths, GetStaticProps, NextPage } from "next"
-import { pokeApi } from "../../api"
+import { Button, Card, Container, Grid, Image, Text } from "@nextui-org/react"
+
+import confetti from 'canvas-confetti'
+
 import { Layout } from "../../components/layouts"
 import { Pokemon } from "../../models"
+import { existInFavorites, getPokemonInfo, toogleFavorites } from "../../utils"
 
 interface Props {
     pokemon: Pokemon
@@ -10,7 +15,33 @@ interface Props {
 
 export const PokemonPage: NextPage<Props> = ({ pokemon }) =>
 {
-    const { name } = pokemon
+    const { id, name, sprites } = pokemon
+    const [ isInFavorites, setIsInFavorites ] = useState(false)
+
+    useEffect(() =>
+    {
+        setIsInFavorites( existInFavorites( id ))
+
+    }, [])
+    
+
+    const onToogleFavorite = () =>
+    {
+        toogleFavorites( id )
+        setIsInFavorites( !isInFavorites )
+
+        if( isInFavorites ) return
+
+        confetti(
+        {
+            zIndex: 999,
+            particleCount: 100,
+            spread: 160,
+            angle: -100,
+            origin: { x: 1, y: 0 }
+        })
+    }
+    
 
     return (
         <Layout title={ `Info de ${ name.toUpperCase() }` } name={ name }>
@@ -20,8 +51,8 @@ export const PokemonPage: NextPage<Props> = ({ pokemon }) =>
                     <Card isHoverable css={{ padding: '30px' }}>
                         <Card.Body>
                             <Card.Image
-                                src={ pokemon.sprites.other?.dream_world.front_default! }
-                                alt={ pokemon.name }
+                                src={ sprites.other?.dream_world.front_default! }
+                                alt={ name }
                                 width={ 100 }
                                 height={ 200 }
                             />
@@ -33,33 +64,37 @@ export const PokemonPage: NextPage<Props> = ({ pokemon }) =>
 
                     <Card>
                         <Card.Header css={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Text h1 transform="capitalize">{ pokemon.name }</Text>
-                            <Button color="gradient" ghost>Guardar en favoritos</Button>
+                            <Text h1 transform="capitalize">{ name }</Text>
+                            <Button
+                                color="gradient"
+                                ghost={ !isInFavorites }
+                                onPress={ onToogleFavorite }
+                            > { isInFavorites ? 'Eliminar de favoritos' : 'Guardar en favoritos' }</Button>
                         </Card.Header>
                         <Card.Body>
                             <Text size={30}>Sprites:</Text>
                             <Container display="flex" direction="row" gap={0}>
                                 <Image
-                                    src={ pokemon.sprites.front_default! }
-                                    alt={ pokemon.name }
+                                    src={ sprites.front_default! }
+                                    alt={ name }
                                     width={ 100 }
                                     height={ 100 }
                                 />
                                 <Image
-                                    src={ pokemon.sprites.back_default! }
-                                    alt={ pokemon.name }
+                                    src={ sprites.back_default! }
+                                    alt={ name }
                                     width={ 100 }
                                     height={ 100 }
                                 />
                                 <Image
-                                    src={ pokemon.sprites.front_shiny! }
-                                    alt={ pokemon.name }
+                                    src={ sprites.front_shiny! }
+                                    alt={ name }
                                     width={ 100 }
                                     height={ 100 }
                                 />
                                 <Image
-                                    src={ pokemon.sprites.back_shiny! }
-                                    alt={ pokemon.name }
+                                    src={ sprites.back_shiny! }
+                                    alt={ name }
                                     width={ 100 }
                                     height={ 100 }
                                 />
@@ -89,11 +124,11 @@ export const getStaticPaths: GetStaticPaths = async (ctx) =>
 export const getStaticProps: GetStaticProps = async ({ params }) =>
 {
     const { id } = params as { id: string }
-    const { data } = await pokeApi.get<Pokemon>(`pokemon/${ id }`)
+    console.log(id)
 
     return {
         props: {
-            pokemon: data
+            pokemon: await getPokemonInfo( id )
         }
     }
 }

@@ -8,9 +8,13 @@ export interface PokemonListResponse
 
 export interface SmallPokemon
 {
-    id: string;
+    id: string|number;
     img?: string;
-    name: string;
+    name?: string;
     url?:  string;
+
+}
+
+type pokeId = {
 
 }
